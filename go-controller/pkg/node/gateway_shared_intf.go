@@ -115,6 +115,7 @@ func (npw *nodePortWatcher) updateGatewayIPs(addressManager *addressManager) {
 
 	npw.gatewayIPLock.Lock()
 	defer npw.gatewayIPLock.Unlock()
+	klog.Info("SD DEBUG updateGatewayIPS(): %+v", gatewayIPv4)
 	npw.gatewayIPv4 = gatewayIPv4
 	npw.gatewayIPv6 = gatewayIPv6
 }
@@ -136,6 +137,7 @@ func (npw *nodePortWatcher) updateGatewayIPs(addressManager *addressManager) {
 // `hasLocalHostNetworkEp` indicates if at least one host networked endpoint exists for this service which is local to this node.
 func (npw *nodePortWatcher) updateServiceFlowCache(service *kapi.Service, add, hasLocalHostNetworkEp bool) error {
 	npw.gatewayIPLock.Lock()
+	klog.Info("SD DEBUG updateServiceFlowCache(): %+v", npw.gatewayIPv4)
 	defer npw.gatewayIPLock.Unlock()
 	var cookie, key string
 	var err error
@@ -1104,6 +1106,8 @@ func newGatewayOpenFlowManager(gwBridge, exGWBridge *bridgeConfiguration, subnet
 func (ofm *openflowManager) updateBridgeFlowCache(subnets []*net.IPNet, extraIPs []net.IP) error {
 	// protect defaultBridge config from being updated by gw.nodeIPManager
 	ofm.defaultBridge.Lock()
+	klog.Info("SD DEBUG updateBridgeFlowCache() subnets: %+v", subnets)
+	klog.Info("SD DEBUG updateBridgeFlowCache(): extraIPs %+v", extraIPs)
 	defer ofm.defaultBridge.Unlock()
 
 	dftFlows, err := flowsForDefaultBridge(ofm.defaultBridge, extraIPs)
@@ -1806,6 +1810,11 @@ func newNodePortWatcher(gwBridge *bridgeConfiguration, nodeName string, ofm *ope
 		return nil, fmt.Errorf("failed to get ofport of %s, stderr: %q, error: %v",
 			gwBridge.patchPort, stderr, err)
 	}
+
+	klog.Info("SD DEBUG newNodePortWatcher(): %+v", gwBridge)
+	klog.Info("SD DEBUG newNodePortWatcher() ips: %+v", gwBridge.ips)
+	klog.Info("SD DEBUG newNodePortWatcher() patchport: %+v", gwBridge.patchPort)
+	klog.Info("SD DEBUG newNodePortWatcher() uplinkname: %+v", gwBridge.uplinkName)
 
 	// Get ofport of physical interface
 	ofportPhys, stderr, err := util.GetOVSOfPort("--if-exists", "get",

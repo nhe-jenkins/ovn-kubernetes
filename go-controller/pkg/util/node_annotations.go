@@ -9,6 +9,7 @@ import (
 
 	kapi "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/klog/v2"
 
 	"github.com/ovn-org/ovn-kubernetes/go-controller/pkg/config"
 	"github.com/ovn-org/ovn-kubernetes/go-controller/pkg/kube"
@@ -334,6 +335,7 @@ func SetNodePrimaryIfAddrs(nodeAnnotator kube.Annotator, ifAddrs []*net.IPNet) (
 	primaryIfAddrAnnotation := primaryIfAddrAnnotation{}
 	if nodeIPNetv4 != nil {
 		primaryIfAddrAnnotation.IPv4 = nodeIPNetv4.String()
+		klog.Info("SD DEBUG initGateway(): %+v", primaryIfAddrAnnotation.IPv4)
 	}
 	if nodeIPNetv6 != nil {
 		primaryIfAddrAnnotation.IPv6 = nodeIPNetv6.String()

@@ -23,6 +23,9 @@ func newLocalGateway(nodeName string, hostSubnets []*net.IPNet, gwNextHops []net
 	klog.Info("Creating new local gateway")
 	gw := &gateway{}
 
+	klog.Info("SD DEBUG newLocalGateway() ip: %+v", gwIPs)
+	klog.Info("SD DEBUG newLocalGatewat() nexthop: %+v", gwNextHops)
+
 	for _, hostSubnet := range hostSubnets {
 		// local gateway mode uses mp0 as default path for all ingress traffic into OVN
 		var nextHop *net.IPNet

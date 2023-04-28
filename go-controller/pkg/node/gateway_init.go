@@ -306,6 +306,7 @@ func (nc *DefaultNodeNetworkController) initGateway(subnets []*net.IPNet, nodeAn
 	if err != nil {
 		return err
 	}
+	klog.Info("SD DEBUG initGateway(): %+v", ifAddrs)
 
 	// For DPU need to use the host IP addr which currently is assumed to be K8s Node cluster
 	// internal IP address.

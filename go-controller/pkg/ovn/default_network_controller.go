@@ -857,6 +857,7 @@ func (h *defaultNetworkControllerEventHandler) UpdateResource(oldObj, newObj int
 		// We are only interested in the IPs here, not the subnet information.
 		oldV4Addr, oldV6Addr := util.GetNodeInternalAddrs(oldNode)
 		newV4Addr, newV6Addr := util.GetNodeInternalAddrs(newNode)
+		klog.Info("SD DEBUG UpdateResource(): %+v, %+v", oldV4Addr, newV4Addr)
 		if !oldV4Addr.Equal(newV4Addr) || !oldV6Addr.Equal(newV6Addr) {
 			klog.Infof("Egress IP detected IP address change. Recreating node %s for Egress IP.", newNode.Name)
 			if err := h.oc.deleteNodeForEgress(oldNode); err != nil {
