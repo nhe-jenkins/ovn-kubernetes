@@ -806,6 +806,7 @@ func (nc *DefaultNodeNetworkController) startEgressIPHealthCheckingServer(mgmtPo
 	// Not all management port interfaces can have IP addresses assignable to them.
 	if mgmtPortEntry.port.HasIpAddr() {
 		if mgmtPortConfig.ipv4 != nil {
+			klog.Info("SD DEBUG 5(): %+v", mgmtPortConfig.ipv4)
 			nodeMgmtIP = mgmtPortConfig.ipv4.ifAddr.IP
 		} else if mgmtPortConfig.ipv6 != nil {
 			nodeMgmtIP = mgmtPortConfig.ipv6.ifAddr.IP

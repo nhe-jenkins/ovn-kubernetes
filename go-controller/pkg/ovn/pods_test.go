@@ -1634,6 +1634,7 @@ var _ = ginkgo.Describe("OVN Pod Operations", func() {
 				_, t3Route.Dest, _ = net.ParseCIDR("10.132.0.0/14")
 				_, nodeSubnet, _ := net.ParseCIDR(t3.nodeSubnet)
 				t3Route.NextHop = util.GetNodeHybridOverlayIfAddr(nodeSubnet).IP
+				klog.Info("SD DEBUG 68()): %+v", t3Route.NextHop)
 				t3.routes = []util.PodRoute{t3Route}
 
 				initialDB = libovsdbtest.TestSetup{

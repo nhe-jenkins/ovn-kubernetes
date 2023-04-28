@@ -10,6 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/klog/v2"
 	utilnet "k8s.io/utils/net"
 
 	libovsdbclient "github.com/ovn-org/libovsdb/client"
@@ -96,6 +97,7 @@ func (oc *DefaultNetworkController) gatewayInit(nodeName string, clusterIPSubnet
 
 	gwLRPIPs := make([]net.IP, 0)
 	for _, gwLRPIfAddr := range gwLRPIfAddrs {
+		klog.Info("SD DEBUG 56(): %+v", gwLRPIfAddr)
 		gwLRPIPs = append(gwLRPIPs, gwLRPIfAddr.IP)
 	}
 
@@ -104,6 +106,7 @@ func (oc *DefaultNetworkController) gatewayInit(nodeName string, clusterIPSubnet
 	physicalIPs := make([]string, len(l3GatewayConfig.IPAddresses))
 	for i, ip := range l3GatewayConfig.IPAddresses {
 		physicalIPs[i] = ip.IP.String()
+		klog.Info("SD DEBUG 57(): %+v", ip.IP.String())
 	}
 
 	logicalRouterOptions := map[string]string{
@@ -361,6 +364,7 @@ func (oc *DefaultNetworkController) gatewayInit(nodeName string, clusterIPSubnet
 			// management port interface for the hostSubnet prefix before adding the routes
 			// towards join switch.
 			mgmtIfAddr := util.GetNodeManagementIfAddr(hostSubnet)
+			klog.Info("SD DEBUG 58(): %+v", mgmtIfAddr)
 			oc.staticRouteCleanup([]net.IP{mgmtIfAddr.IP})
 
 			err := libovsdbops.CreateOrReplaceLogicalRouterStaticRouteWithPredicate(oc.nbClient, types.OVNClusterRouter,
@@ -533,7 +537,7 @@ func (oc *DefaultNetworkController) addPolicyBasedRoutes(nodeName, mgmtPortIP st
 	} else {
 		l3Prefix = "ip4"
 	}
-
+	klog.Info("SD DEBUG 59(): %+v", hostIfAddr.IP.String())
 	matches := sets.New[string]()
 	for _, hostIP := range append(otherHostAddrs, hostIfAddr.IP.String()) {
 		// embed nodeName as comment so that it is easier to delete these rules later on.

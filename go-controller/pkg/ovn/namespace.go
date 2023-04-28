@@ -488,6 +488,7 @@ func (oc *DefaultNetworkController) createNamespaceAddrSetAllPods(ns string) (ad
 				}
 				for _, hostSubnet := range hostSubnets {
 					mgmtIfAddr := util.GetNodeManagementIfAddr(hostSubnet)
+					klog.Info("SD DEBUG 67()): %+v", mgmtIfAddr)
 					ips = append(ips, mgmtIfAddr.IP)
 				}
 				// for shared gateway mode we will use LRP IPs to SNAT host network traffic

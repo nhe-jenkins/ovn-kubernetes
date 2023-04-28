@@ -13,6 +13,7 @@ import (
 
 	"github.com/ovn-org/libovsdb/client"
 	"github.com/ovn-org/ovn-kubernetes/go-controller/pkg/nbdb"
+	"k8s.io/klog/v2"
 	utilnet "k8s.io/utils/net"
 )
 
@@ -106,6 +107,7 @@ func GetOVSPortMACAddress(portName string) (net.HardwareAddr, error) {
 // GetNodeGatewayIfAddr returns the node logical switch gateway address
 // (the ".1" address)
 func GetNodeGatewayIfAddr(subnet *net.IPNet) *net.IPNet {
+	klog.Info("SD DEBUG 75): %+v", subnet.IP)
 	return &net.IPNet{IP: NextIP(subnet.IP), Mask: subnet.Mask}
 }
 
@@ -113,6 +115,7 @@ func GetNodeGatewayIfAddr(subnet *net.IPNet) *net.IPNet {
 // (the ".2" address)
 func GetNodeManagementIfAddr(subnet *net.IPNet) *net.IPNet {
 	gwIfAddr := GetNodeGatewayIfAddr(subnet)
+	klog.Info("SD DEBUG 76): %+v", gwIfAddr)
 	return &net.IPNet{IP: NextIP(gwIfAddr.IP), Mask: subnet.Mask}
 }
 
@@ -120,6 +123,7 @@ func GetNodeManagementIfAddr(subnet *net.IPNet) *net.IPNet {
 // port address (the ".3" address)
 func GetNodeHybridOverlayIfAddr(subnet *net.IPNet) *net.IPNet {
 	mgmtIfAddr := GetNodeManagementIfAddr(subnet)
+	klog.Info("SD DEBUG 77): %+v", mgmtIfAddr)
 	return &net.IPNet{IP: NextIP(mgmtIfAddr.IP), Mask: subnet.Mask}
 }
 

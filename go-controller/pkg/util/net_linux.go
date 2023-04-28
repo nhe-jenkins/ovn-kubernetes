@@ -550,6 +550,7 @@ func GetIPv6OnSubnet(iface string, ip *net.IPNet) (*net.IPNet, error) {
 // GetIFNameAndMTUForAddress returns the interfaceName and MTU for the given network address
 func GetIFNameAndMTUForAddress(ifAddress net.IP) (string, int, error) {
 	// from the IP address arrive at the link
+	klog.Info("SD DEBUG 74): %+v", ifAddress)
 	addressFamily := getFamily(ifAddress)
 	allAddresses, err := netLinkOps.AddrList(nil, addressFamily)
 	if err != nil {

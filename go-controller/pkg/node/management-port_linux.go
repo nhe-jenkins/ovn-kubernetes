@@ -41,7 +41,8 @@ type managementPortConfig struct {
 
 func newManagementPortIPFamilyConfig(hostSubnet *net.IPNet, isIPv6 bool) (*managementPortIPFamilyConfig, error) {
 	var err error
-
+	klog.Info("SD DEBUG 17: %+v", hostSubnet)
+	klog.Info("SD DEBUG 18: %+v", util.GetNodeGatewayIfAddr(hostSubnet).IP)
 	cfg := &managementPortIPFamilyConfig{
 		ifAddr: util.GetNodeManagementIfAddr(hostSubnet),
 		gwIP:   util.GetNodeGatewayIfAddr(hostSubnet).IP,
@@ -178,7 +179,7 @@ func setupManagementPortIPFamilyConfig(mpcfg *managementPortConfig, cfg *managem
 	var warnings []string
 	var err error
 	var exists bool
-
+	klog.Info("SD DEBUG 19: %+v", cfg.ifAddr)
 	if exists, err = util.LinkAddrExist(mpcfg.link, cfg.ifAddr); err == nil && !exists {
 		// we should log this so that one can debug as to why addresses are
 		// disappearing
@@ -261,6 +262,7 @@ func setupManagementPortIPFamilyConfig(mpcfg *managementPortConfig, cfg *managem
 	}
 	rule = []string{"-o", mpcfg.ifName, "-j", "SNAT", "--to-source", cfg.ifAddr.IP.String(),
 		"-m", "comment", "--comment", "OVN SNAT to Management Port"}
+	klog.Info("SD DEBUG 20: %+v", cfg.ifAddr.IP.String())
 	if exists, err = cfg.ipt.Exists("nat", iptableMgmPortChain, rule...); err == nil && !exists {
 		warnings = append(warnings, fmt.Sprintf("missing management port nat rule in chain %s, adding it",
 			iptableMgmPortChain))

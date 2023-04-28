@@ -215,6 +215,7 @@ func (bnc *BaseNetworkController) syncNodeClusterRouterPort(node *kapi.Node, hos
 	var nodeLRPMAC net.HardwareAddr
 	for _, hostSubnet := range hostSubnets {
 		gwIfAddr := util.GetNodeGatewayIfAddr(hostSubnet)
+		klog.Info("SD DEBUG 42(): %+v", gwIfAddr.IP)
 		nodeLRPMAC = util.IPAddrToHWAddr(gwIfAddr.IP)
 		if !utilnet.IsIPv6CIDR(hostSubnet) {
 			break
@@ -227,6 +228,7 @@ func (bnc *BaseNetworkController) syncNodeClusterRouterPort(node *kapi.Node, hos
 	lrpNetworks := []string{}
 	for _, hostSubnet := range hostSubnets {
 		gwIfAddr := util.GetNodeGatewayIfAddr(hostSubnet)
+		klog.Info("SD DEBUG 43(): %+v", gwIfAddr.IP)
 		lrpNetworks = append(lrpNetworks, gwIfAddr.String())
 	}
 	logicalRouterPort := nbdb.LogicalRouterPort{
@@ -258,6 +260,7 @@ func (bnc *BaseNetworkController) createNodeLogicalSwitch(nodeName string, hostS
 	switchName := bnc.GetNetworkScopedName(nodeName)
 	for _, hostSubnet := range hostSubnets {
 		gwIfAddr := util.GetNodeGatewayIfAddr(hostSubnet)
+		klog.Info("SD DEBUG 44(): %+v", gwIfAddr.IP)
 		nodeLRPMAC = util.IPAddrToHWAddr(gwIfAddr.IP)
 		if !utilnet.IsIPv6CIDR(hostSubnet) {
 			break
@@ -278,6 +281,7 @@ func (bnc *BaseNetworkController) createNodeLogicalSwitch(nodeName string, hostS
 	logicalSwitch.OtherConfig = map[string]string{}
 	for _, hostSubnet := range hostSubnets {
 		gwIfAddr := util.GetNodeGatewayIfAddr(hostSubnet)
+		klog.Info("SD DEBUG 45(): %+v", gwIfAddr.IP)
 		mgmtIfAddr := util.GetNodeManagementIfAddr(hostSubnet)
 
 		if utilnet.IsIPv6CIDR(hostSubnet) {
@@ -290,6 +294,7 @@ func (bnc *BaseNetworkController) createNodeLogicalSwitch(nodeName string, hostS
 			excludeIPs := mgmtIfAddr.IP.String()
 			if config.HybridOverlay.Enabled {
 				hybridOverlayIfAddr := util.GetNodeHybridOverlayIfAddr(hostSubnet)
+				klog.Info("SD DEBUG 46(): %+v", hybridOverlayIfAddr)
 				excludeIPs += ".." + hybridOverlayIfAddr.IP.String()
 			}
 			logicalSwitch.OtherConfig["subnet"] = hostSubnet.String()

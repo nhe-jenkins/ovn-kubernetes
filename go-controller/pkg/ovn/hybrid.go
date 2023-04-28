@@ -204,6 +204,7 @@ func (oc *DefaultNetworkController) setupHybridLRPolicySharedGw(nodeSubnets []*n
 				return err
 			}
 			gwLRPIfAddr, err := util.MatchFirstIPNetFamily(utilnet.IsIPv6CIDR(hybridCIDR), gwLRPIfAddrs)
+			klog.Info("SD DEBUG 60(): %+v", gwLRPIfAddr.IP.String())
 			if err != nil {
 				return err
 			}
@@ -254,6 +255,7 @@ func (oc *DefaultNetworkController) setupHybridLRPolicySharedGw(nodeSubnets []*n
 			if err != nil {
 				return err
 			}
+			klog.Info("SD DEBUG 60(): %+v", drLRPIfAddrs)
 			drLRPIfAddr, err := util.MatchFirstIPNetFamily(utilnet.IsIPv6CIDR(hybridCIDR), drLRPIfAddrs)
 			if err != nil {
 				return fmt.Errorf("failed to match cluster router join interface IPs: %v, err: %v", drLRPIfAddr, err)

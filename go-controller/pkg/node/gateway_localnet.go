@@ -149,6 +149,7 @@ func newLocalGateway(nodeName string, hostSubnets []*net.IPNet, gwNextHops []net
 func getGatewayFamilyAddrs(gatewayIfAddrs []*net.IPNet) (string, string) {
 	var gatewayIPv4, gatewayIPv6 string
 	for _, gatewayIfAddr := range gatewayIfAddrs {
+		klog.Info("SD DEBUG 12: %+v", gatewayIfAddr.IP.String())
 		if utilnet.IsIPv6(gatewayIfAddr.IP) {
 			gatewayIPv6 = gatewayIfAddr.IP.String()
 		} else {

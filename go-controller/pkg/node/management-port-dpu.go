@@ -110,6 +110,7 @@ func (mp *managementPortRepresentor) Create(nodeAnnotator kube.Annotator, waiter
 	}
 
 	mgmtPortMac := util.IPAddrToHWAddr(util.GetNodeManagementIfAddr(mp.hostSubnets[0]).IP)
+	klog.Info("SD DEBUG 21: %+v", mgmtPortMac)
 	if err := util.SetNodeManagementPortMACAddress(nodeAnnotator, mgmtPortMac); err != nil {
 		return nil, err
 	}

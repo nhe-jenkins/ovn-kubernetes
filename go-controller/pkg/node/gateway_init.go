@@ -188,6 +188,7 @@ func getDPUHostPrimaryIPAddresses(k8sNodeIP net.IP, ifAddrs []*net.IPNet) ([]*ne
 	// for each node.
 	var gwIps []*net.IPNet
 	isIPv4 := utilnet.IsIPv4(k8sNodeIP)
+	klog.Info("SD DEBUG 6(): %+v", k8sNodeIP)
 
 	// override subnet mask via config
 	if config.Gateway.RouterSubnet != "" {
@@ -209,6 +210,7 @@ func getDPUHostPrimaryIPAddresses(k8sNodeIP net.IP, ifAddrs []*net.IPNet) ([]*ne
 		// Assume Host and DPU share the same subnet
 		// in this case just update the matching IPNet with the Host's IP address
 		for _, addr := range ifAddrs {
+			klog.Info("SD DEBUG 7(): %+v", addr)
 			if utilnet.IsIPv4CIDR(addr) != isIPv4 {
 				continue
 			}
@@ -315,6 +317,7 @@ func (nc *DefaultNodeNetworkController) initGateway(subnets []*net.IPNet, nodeAn
 		if err != nil {
 			return err
 		}
+		klog.Info("SD DEBUG 9(): %+v", ifAddrs)
 	}
 
 	if err := util.SetNodePrimaryIfAddrs(nodeAnnotator, ifAddrs); err != nil {
@@ -424,6 +427,7 @@ func (nc *DefaultNodeNetworkController) initGatewayDPUHost(kubeNodeIP net.IP) er
 	if err != nil {
 		return err
 	}
+	klog.Info("SD DEBUG 10(): %+v", ifAddrs)
 
 	if err := setNodeMasqueradeIPOnExtBridge(gwIntf); err != nil {
 		return fmt.Errorf("failed to set the node masquerade IP on the ext bridge %s: %v", gwIntf, err)

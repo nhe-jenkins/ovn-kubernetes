@@ -1640,6 +1640,7 @@ func initSvcViaMgmPortRoutingRules(hostSubnets []*net.IPNet) error {
 	for _, hostSubnet := range hostSubnets {
 		isIPv6 := utilnet.IsIPv6CIDR(hostSubnet)
 		gatewayIP := util.GetNodeGatewayIfAddr(hostSubnet).IP.String()
+		klog.Info("SD DEBUG 13: %+v", gatewayIP)
 		for _, svcCIDR := range config.Kubernetes.ServiceCIDRs {
 			if isIPv6 == utilnet.IsIPv6CIDR(svcCIDR) {
 				if stdout, stderr, err := util.RunIP("route", "replace", "table", ovnkubeSvcViaMgmPortRT, svcCIDR.String(), "via", gatewayIP, "dev", types.K8sMgmtIntfName); err != nil {
@@ -1936,6 +1937,7 @@ func svcToCookie(namespace string, name string, token string, port int32) (strin
 
 func addMasqueradeRoute(netIfaceName, nodeName string, ifAddrs []*net.IPNet, watchFactory factory.NodeWatchFactory) error {
 	var ipv4, ipv6 net.IP
+	klog.Info("SD DEBUG 14: %+v", ifAddrs)
 	findIPs := func(ips []net.IP) error {
 		var err error
 		if config.IPv4Mode && ipv4 == nil {
@@ -1981,6 +1983,7 @@ func addMasqueradeRoute(netIfaceName, nodeName string, ifAddrs []*net.IPNet, wat
 		// fallback to the interface IPs
 		var ifIPs []net.IP
 		for _, ifAddr := range ifAddrs {
+			klog.Info("SD DEBUG 15: %+v", ifAddr)
 			ifIPs = append(ifIPs, ifAddr.IP)
 		}
 		err := findIPs(ifIPs)

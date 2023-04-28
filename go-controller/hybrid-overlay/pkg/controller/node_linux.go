@@ -633,12 +633,14 @@ func (n *NodeController) EnsureHybridOverlayBridge(node *kapi.Node) error {
 
 	// Add a rule to fix up return host-network traffic
 	mgmtIfAddr := util.GetNodeManagementIfAddr(subnet)
+	klog.Info("SD DEBUG 1(): %+v", mgmtIfAddr.IP.String())
 	flows = append(flows,
 		fmt.Sprintf("table=10,priority=100,ip,nw_dst=%s,"+
 			"actions=mod_dl_src:%s,mod_dl_dst:%s,output:ext",
 			mgmtIfAddr.IP.String(), portMAC.String(), mgmtPortMAC.String()))
 	// Add a rule to fix up return nodePort service traffic
 	gwIfAddr := util.GetNodeGatewayIfAddr(subnet)
+	klog.Info("SD DEBUG 2(): %+v", gwIfAddr)
 	gwPortMAC := util.IPAddrToHWAddr(gwIfAddr.IP)
 	flows = append(flows,
 		fmt.Sprintf("table=10,priority=100,ip,nw_dst=%s,"+

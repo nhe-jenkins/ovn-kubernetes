@@ -307,6 +307,7 @@ func (c *Controller) nodeStateFor(name string) (*nodeState, error) {
 	mgmtIPs := make([]net.IP, len(nodeSubnets))
 	for i, subnet := range nodeSubnets {
 		mgmtIPs[i] = util.GetNodeManagementIfAddr(subnet).IP
+		klog.Info("SD DEBUG 70): %+v", mgmtIPs[i])
 	}
 
 	var v4IP, v6IP net.IP

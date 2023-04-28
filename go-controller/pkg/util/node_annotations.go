@@ -329,17 +329,20 @@ type primaryIfAddrAnnotation struct {
 
 // SetNodePrimaryIfAddr sets the IPv4 / IPv6 values of the node's primary network interface
 func SetNodePrimaryIfAddrs(nodeAnnotator kube.Annotator, ifAddrs []*net.IPNet) (err error) {
+	klog.Info("SD DEBUG 78): %+v", ifAddrs)
 	nodeIPNetv4, _ := MatchFirstIPNetFamily(false, ifAddrs)
 	nodeIPNetv6, _ := MatchFirstIPNetFamily(true, ifAddrs)
 
 	primaryIfAddrAnnotation := primaryIfAddrAnnotation{}
 	if nodeIPNetv4 != nil {
 		primaryIfAddrAnnotation.IPv4 = nodeIPNetv4.String()
+		klog.Info("SD DEBUG 79): %+v", primaryIfAddrAnnotation.IPv4)
 		klog.Info("SD DEBUG initGateway(): %+v", primaryIfAddrAnnotation.IPv4)
 	}
 	if nodeIPNetv6 != nil {
 		primaryIfAddrAnnotation.IPv6 = nodeIPNetv6.String()
 	}
+	klog.Info("SD DEBUG 80): %+v", ovnNodeIfAddr)
 	return nodeAnnotator.Set(ovnNodeIfAddr, primaryIfAddrAnnotation)
 }
 
@@ -352,6 +355,7 @@ func CreateNodeGatewayRouterLRPAddrAnnotation(nodeAnnotation map[string]string, 
 	primaryIfAddrAnnotation := primaryIfAddrAnnotation{}
 	if nodeIPNetv4 != nil {
 		primaryIfAddrAnnotation.IPv4 = nodeIPNetv4.String()
+		klog.Info("SD DEBUG 81): %+v", primaryIfAddrAnnotation.IPv4)
 	}
 	if nodeIPNetv6 != nil {
 		primaryIfAddrAnnotation.IPv6 = nodeIPNetv6.String()
@@ -406,12 +410,14 @@ func getNodeIfAddrAnnotation(node *kapi.Node) (*primaryIfAddrAnnotation, error) 
 	if nodeIfAddr.IPv4 == "" && nodeIfAddr.IPv6 == "" {
 		return nil, fmt.Errorf("node: %q does not have any IP information set", node.Name)
 	}
+	klog.Info("SD DEBUG 82): %+v", nodeIfAddr)
 	return nodeIfAddr, nil
 }
 
 // ParseNodePrimaryIfAddr returns the IPv4 / IPv6 values for the node's primary network interface
 func ParseNodePrimaryIfAddr(node *kapi.Node) (*ParsedNodeEgressIPConfiguration, error) {
 	nodeIfAddr, err := getNodeIfAddrAnnotation(node)
+	klog.Info("SD DEBUG 83): %+v", nodeIfAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -447,6 +453,7 @@ func ParseNodeGatewayRouterLRPAddr(node *kapi.Node) (net.IP, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse annotation: %s for node %q, err: %v", ovnNodeGRLRPAddr, node.Name, err)
 	}
+	klog.Info("SD DEBUG 84): %+v", ip)
 	return ip, nil
 }
 
@@ -480,6 +487,7 @@ func ParseCloudEgressIPConfig(node *kapi.Node) (*ParsedNodeEgressIPConfiguration
 	// ParsedNodeEgressIPConfiguration.V[4|6].IP is used to verify if an egress IP matches node IP to disable its creation
 	// use node IP instead of the value assigned from cloud egress CIDR config
 	nodeIfAddr, err := getNodeIfAddrAnnotation(node)
+	klog.Info("SD DEBUG 85): %+v", nodeIfAddr)
 	if err != nil {
 		return nil, err
 	}

@@ -186,6 +186,7 @@ func doPodFlowsExist(mac string, ifAddrs []*net.IPNet, ofPort int) bool {
 	}
 	for _, ifAddr := range ifAddrs {
 		var ipMatch string
+		klog.Info("SD DEBUG 3(): %+v", ifAddr.IP)
 		if !utilnet.IsIPv6(ifAddr.IP) {
 			ipMatch = "ip,ip_dst"
 		} else {
@@ -269,6 +270,7 @@ func waitForPodInterface(ctx context.Context, ifInfo *PodInterfaceInfo,
 
 	mac := ifInfo.MAC.String()
 	ifAddrs := ifInfo.IPs
+	klog.Info("SD DEBUG 4(): %+v", ifAddrs)
 	checkExternalIDs := ifInfo.CheckExtIDs
 	if checkExternalIDs {
 		detail = " (ovn-installed)"

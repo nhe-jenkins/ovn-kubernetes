@@ -475,7 +475,7 @@ func (oc *DefaultNetworkController) deleteGWRoutesForPod(name ktypes.NamespacedN
 // addEgressGwRoutesForPod handles adding all routes to gateways for a pod on a specific GR
 func (oc *DefaultNetworkController) addGWRoutesForPod(gateways []*gatewayInfo, podIfAddrs []*net.IPNet, podNsName ktypes.NamespacedName, node string) error {
 	gr := util.GetGatewayRouterFromNode(node)
-
+	klog.Info("SD DEBUG 47(): %+v", podIfAddrs)
 	routesAdded := 0
 	portPrefix, err := oc.extSwitchPrefix(node)
 	if err != nil {
@@ -490,6 +490,7 @@ func (oc *DefaultNetworkController) addGWRoutesForPod(gateways []*gatewayInfo, p
 	}
 	defer routeInfo.Unlock()
 	for _, podIPNet := range podIfAddrs {
+		klog.Info("SD DEBUG 48(): %+v", podIPNet)
 		for _, gateway := range gateways {
 			// TODO (trozet): use the go bindings here and batch commands
 			// validate the ip and gateway belong to the same address family
@@ -609,6 +610,7 @@ func deletePodSNATOps(nbClient libovsdbclient.Client, ops []ovsdb.Operation, nod
 // used when disableSNATMultipleGWs=true
 func addOrUpdatePodSNAT(nbClient libovsdbclient.Client, nodeName string, extIPs, podIfAddrs []*net.IPNet) error {
 	nats, err := buildPodSNAT(extIPs, podIfAddrs)
+	klog.Info("SD DEBUG 48(): %+v,  %+v,  %+v", podIfAddrs, nats, extIPs)
 	if err != nil {
 		return err
 	}
@@ -628,6 +630,7 @@ func addOrUpdatePodSNATOps(nbClient libovsdbclient.Client, nodeName string, extI
 	gr := types.GWRouterPrefix + nodeName
 	router := &nbdb.LogicalRouter{Name: gr}
 	nats, err := buildPodSNAT(extIPs, podIfAddrs)
+	klog.Info("SD DEBUG 49(): %+v,  %+v,  %+v", podIfAddrs, nats, extIPs)
 	if err != nil {
 		return nil, err
 	}
@@ -640,6 +643,7 @@ func addOrUpdatePodSNATOps(nbClient libovsdbclient.Client, nodeName string, extI
 // addHybridRoutePolicyForPod handles adding a higher priority allow policy to allow traffic to be routed normally
 // by ecmp routes
 func (oc *DefaultNetworkController) addHybridRoutePolicyForPod(podIP net.IP, node string) error {
+	klog.Info("SD DEBUG 50(): %+v", podIP)
 	if config.Gateway.Mode == config.GatewayModeLocal {
 		// Add podIP to the node's address_set.
 		asIndex := getHybridRouteAddrSetDbIDs(node, oc.controllerName)
@@ -667,10 +671,12 @@ func (oc *DefaultNetworkController) addHybridRoutePolicyForPod(podIP net.IP, nod
 
 		// get the GR to join switch ip address
 		grJoinIfAddrs, err := util.GetLRPAddrs(oc.nbClient, types.GWRouterToJoinSwitchPrefix+types.GWRouterPrefix+node)
+		klog.Info("SD DEBUG 51(): %+v", grJoinIfAddrs)
 		if err != nil {
 			return fmt.Errorf("unable to find IP address for node: %s, %s port, err: %v", node, types.GWRouterToJoinSwitchPrefix, err)
 		}
 		grJoinIfAddr, err := util.MatchFirstIPNetFamily(utilnet.IsIPv6(podIP), grJoinIfAddrs)
+		klog.Info("SD DEBUG 52(): %+v", grJoinIfAddr)
 		if err != nil {
 			return fmt.Errorf("failed to match gateway router join interface IPs: %v, err: %v", grJoinIfAddr, err)
 		}
@@ -692,7 +698,7 @@ func (oc *DefaultNetworkController) addHybridRoutePolicyForPod(podIP net.IP, nod
 		// traffic destined outside of cluster subnet go to GR
 		matchStr := fmt.Sprintf(`inport == "%s%s" && %s.src == $%s`, types.RouterToSwitchPrefix, node, l3Prefix, matchSrcAS)
 		matchStr += matchDst
-
+		klog.Info("SD DEBUG 53(): %+v", grJoinIfAddr.IP.String())
 		logicalRouterPolicy := nbdb.LogicalRouterPolicy{
 			Priority: types.HybridOverlayReroutePriority,
 			Action:   nbdb.LogicalRouterPolicyActionReroute,

@@ -377,6 +377,7 @@ func (b *bridgeConfiguration) updateInterfaceIPAddresses() ([]*net.IPNet, error)
 	b.Lock()
 	defer b.Unlock()
 	ifAddrs, err := getNetworkInterfaceIPAddresses(b.bridgeName)
+	klog.Info("SD DEBUG 16: %+v", ifAddrs)
 	if err == nil {
 		klog.Info("SD DEBUG updateInterfaceIPAddresses(): %+v", ifAddrs)
 		b.ips = ifAddrs

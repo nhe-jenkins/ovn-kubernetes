@@ -338,7 +338,9 @@ func UpdateNodeSwitchExcludeIPs(nbClient libovsdbclient.Client, nodeName string,
 	}
 
 	mgmtIfAddr := GetNodeManagementIfAddr(subnet)
+	klog.Info("SD DEBUG 40(): %+v", mgmtIfAddr.IP.String())
 	hybridOverlayIfAddr := GetNodeHybridOverlayIfAddr(subnet)
+	klog.Info("SD DEBUG 41(): %+v", hybridOverlayIfAddr.IP.String())
 
 	klog.V(5).Infof("haveMP %v haveHO %v ManagementPortAddress %v HybridOverlayAddressOA %v", haveManagementPort, haveHybridOverlayPort, mgmtIfAddr, hybridOverlayIfAddr)
 	var excludeIPs string

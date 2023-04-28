@@ -75,12 +75,14 @@ func NewIPAMAllocator(cidr *net.IPNet) (ipam.Interface, error) {
 // These are the .1, .2 and .3 addresses in particular
 func reserveIPs(subnet *net.IPNet, ipam ipam.Interface) error {
 	gwIfAddr := util.GetNodeGatewayIfAddr(subnet)
+	klog.Info("SD DEBUG 71): %+v", gwIfAddr)
 	err := ipam.Allocate(gwIfAddr.IP)
 	if err != nil {
 		klog.Errorf("Unable to allocate subnet's gateway IP: %s", gwIfAddr.IP)
 		return err
 	}
 	mgmtIfAddr := util.GetNodeManagementIfAddr(subnet)
+	klog.Info("SD DEBUG 72): %+v", mgmtIfAddr)
 	err = ipam.Allocate(mgmtIfAddr.IP)
 	if err != nil {
 		klog.Errorf("Unable to allocate subnet's management IP: %s", mgmtIfAddr.IP)
@@ -321,6 +323,7 @@ func (manager *LogicalSwitchManager) AllocateHybridOverlay(switchName string, hy
 	for _, ipv4IPAM := range ipv4IPAMS {
 		hostSubnet := ipv4IPAM.CIDR()
 		potentialHybridIFAddress := util.GetNodeHybridOverlayIfAddr(&hostSubnet)
+		klog.Info("SD DEBUG 73): %+v", potentialHybridIFAddress)
 		err := ipv4IPAM.Allocate(potentialHybridIFAddress.IP)
 		if err == ipam.ErrAllocated {
 			// allocate NextIP
@@ -575,6 +578,7 @@ func (jsIPManager *JoinSwitchIPManager) getJoinLRPAddresses(nodeName string) []*
 	ifAddrs, err := util.GetLRPAddrs(jsIPManager.nbClient, gwLrpName)
 	if err == nil {
 		for _, ifAddr := range ifAddrs {
+			klog.Info("SD DEBUG 73): %+v", ifAddr)
 			for _, subnet := range joinSubnets {
 				if subnet.Contains(ifAddr.IP) {
 					gwLRPIPs = append(gwLRPIPs, &net.IPNet{IP: ifAddr.IP, Mask: subnet.Mask})

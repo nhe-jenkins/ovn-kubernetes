@@ -195,6 +195,7 @@ func (bnc *BaseNetworkController) deletePodLogicalPort(pod *kapi.Pod, portInfo *
 			switchName = expectedSwitchName
 		}
 		podIfAddrs = annotation.IPs
+		klog.Info("SD DEBUG 22: %+v", annotation.IPs)
 
 		klog.Warningf("No cached port info for deleting %s. Using logical switch %s port uuid %s and addrs %v",
 			podDesc, switchName, portUUID, podIfAddrs)
@@ -202,6 +203,7 @@ func (bnc *BaseNetworkController) deletePodLogicalPort(pod *kapi.Pod, portInfo *
 		portUUID = portInfo.uuid
 		switchName = portInfo.logicalSwitch
 		podIfAddrs = portInfo.ips
+		klog.Info("SD DEBUG 23: %+v", portInfo.ips)
 	}
 
 	// Sanity check
@@ -222,6 +224,7 @@ func (bnc *BaseNetworkController) deletePodLogicalPort(pod *kapi.Pod, portInfo *
 
 			var needleIPs []net.IP
 			for _, podIPNet := range podIfAddrs {
+				klog.Info("SD DEBUG 25: %+v", podIPNet)
 				needleIPs = append(needleIPs, podIPNet.IP)
 			}
 
@@ -373,12 +376,14 @@ func (bnc *BaseNetworkController) addRoutesGatewayIP(pod *kapi.Pod, network *nad
 			return nil
 		case ovntypes.Layer3Topology:
 			for _, podIfAddr := range podAnnotation.IPs {
+				klog.Info("SD DEBUG 26: %+v", podIfAddr)
 				isIPv6 := utilnet.IsIPv6CIDR(podIfAddr)
 				nodeSubnet, err := util.MatchFirstIPNetFamily(isIPv6, nodeSubnets)
 				if err != nil {
 					return err
 				}
 				gatewayIPnet := util.GetNodeGatewayIfAddr(nodeSubnet)
+				klog.Info("SD DEBUG 27: %+v", gatewayIPnet)
 				layer3NetConfInfo := bnc.NetConfInfo.(*util.Layer3NetConfInfo)
 				for _, clusterSubnet := range layer3NetConfInfo.ClusterSubnets {
 					if isIPv6 == utilnet.IsIPv6CIDR(clusterSubnet.CIDR) {
@@ -414,6 +419,7 @@ func (bnc *BaseNetworkController) addRoutesGatewayIP(pod *kapi.Pod, network *nad
 	}
 
 	for _, podIfAddr := range podAnnotation.IPs {
+		klog.Info("SD DEBUG 28: %+v", podIfAddr)
 		isIPv6 := utilnet.IsIPv6CIDR(podIfAddr)
 		nodeSubnet, err := util.MatchFirstIPNetFamily(isIPv6, nodeSubnets)
 		if err != nil {
@@ -587,6 +593,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 	// named return variable for defer to work correctly.
 
 	defer func() {
+		klog.Info("SD DEBUG 29: %+v", podIfAddrs)
 		if releaseIPs && err != nil {
 			if relErr := bnc.lsManager.ReleaseIPs(switchName, podIfAddrs); relErr != nil {
 				klog.Errorf("Error when releasing IPs %s for switch: %s, err: %q",
@@ -600,6 +607,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 	if err == nil {
 		podMac = podAnnotation.MAC
 		podIfAddrs = podAnnotation.IPs
+		klog.Info("SD DEBUG 30: %+v", podIfAddrs)
 
 		// If the pod already has annotations use the existing static
 		// IP/MAC from the annotation.
@@ -626,6 +634,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 	if needsIP {
 		if existingLSP != nil {
 			// try to get the MAC and IPs from existing OVN port first
+			klog.Info("SD DEBUG 31: %+v", podIfAddrs)
 			podMac, podIfAddrs, err = bnc.getPortAddresses(switchName, existingLSP)
 			if err != nil {
 				return nil, nil, nil, false, fmt.Errorf("failed to get pod addresses for pod %s on node: %s, err: %v",
@@ -649,6 +658,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 			if network != nil && network.IPRequest != nil && !bnc.doesNetworkRequireIPAM() {
 				klog.V(5).Infof("Will use static IP addresses for pod %s on a flatL2 topology without subnet defined", podDesc)
 				podIfAddrs, err = calculateStaticIPs(podDesc, network.IPRequest)
+				klog.Info("SD DEBUG 32: %+v", podIfAddrs)
 				if err != nil {
 					return nil, nil, nil, false, err
 				}
@@ -665,6 +675,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 				}
 				if len(generatedPodIfAddrs) > 0 {
 					podIfAddrs = generatedPodIfAddrs
+					klog.Info("SD DEBUG 33: %+v", generatedPodIfAddrs)
 				}
 			}
 		}
@@ -708,6 +719,7 @@ func (bnc *BaseNetworkController) addLogicalPortToNetwork(pod *kapi.Pod, nadName
 	// LSP addresses in OVN are a single space-separated value
 	addresses = []string{podMac.String()}
 	for _, podIfAddr := range podIfAddrs {
+		klog.Info("SD DEBUG 34: %+v", podIfAddr.IP.String())
 		addresses[0] = addresses[0] + " " + podIfAddr.IP.String()
 	}
 
@@ -833,6 +845,7 @@ func (bnc *BaseNetworkController) delLSPOps(logicalPort, switchName,
 func (bnc *BaseNetworkController) deletePodFromNamespace(ns string, podIfAddrs []*net.IPNet, portUUID string) ([]ovsdb.Operation, error) {
 	// for secondary network, namespace may be not managed
 	nsInfo, nsUnlock := bnc.getNamespaceLocked(ns, true)
+	klog.Info("SD DEBUG 35: %+v", podIfAddrs)
 	if nsInfo == nil {
 		return nil, nil
 	}

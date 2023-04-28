@@ -195,6 +195,7 @@ func (oc *DefaultNetworkController) SetupMaster(existingNodeNames []string) erro
 	// Allocate IPs for logical router port "GwRouterToJoinSwitchPrefix + OVNClusterRouter". This should always
 	// allocate the first IPs in the join switch subnets
 	gwLRPIfAddrs, err := oc.joinSwIPManager.EnsureJoinLRPIPs(types.OVNClusterRouter)
+	klog.Info("SD DEBUG 61(): %+v", gwLRPIfAddrs)
 	if err != nil {
 		return fmt.Errorf("failed to allocate join switch IP address connected to %s: %v", types.OVNClusterRouter, err)
 	}
@@ -206,6 +207,7 @@ func (oc *DefaultNetworkController) SetupMaster(existingNodeNames []string) erro
 	gwLRPMAC := util.IPAddrToHWAddr(gwLRPIfAddrs[0].IP)
 	gwLRPNetworks := []string{}
 	for _, gwLRPIfAddr := range gwLRPIfAddrs {
+		klog.Info("SD DEBUG 62(): %+v", gwLRPIfAddr)
 		gwLRPNetworks = append(gwLRPNetworks, gwLRPIfAddr.String())
 	}
 	logicalRouterPort := nbdb.LogicalRouterPort{
@@ -257,6 +259,7 @@ func (oc *DefaultNetworkController) syncNodeManagementPort(node *kapi.Node, host
 	for _, hostSubnet := range hostSubnets {
 		mgmtIfAddr := util.GetNodeManagementIfAddr(hostSubnet)
 		addresses += " " + mgmtIfAddr.IP.String()
+		klog.Info("SD DEBUG 63(): %+v", mgmtIfAddr.IP.String())
 
 		if err := addAllowACLFromNode(node.Name, mgmtIfAddr.IP, oc.nbClient); err != nil {
 			return err
@@ -333,11 +336,14 @@ func (oc *DefaultNetworkController) syncGatewayLogicalNetwork(node *kapi.Node, l
 
 	for _, subnet := range hostSubnets {
 		hostIfAddr := util.GetNodeManagementIfAddr(subnet)
+		klog.Info("SD DEBUG 63(): %+v", hostIfAddr.IP)
 		l3GatewayConfigIP, err := util.MatchFirstIPNetFamily(utilnet.IsIPv6(hostIfAddr.IP), l3GatewayConfig.IPAddresses)
+		klog.Info("SD DEBUG 64()): %+v", l3GatewayConfigIP)
 		if err != nil {
 			return err
 		}
 		relevantHostIPs, err := util.MatchAllIPStringFamily(utilnet.IsIPv6(hostIfAddr.IP), hostAddrs.UnsortedList())
+		klog.Info("SD DEBUG 65()): %+v", relevantHostIPs)
 		if err != nil && err != util.NoIPError {
 			return err
 		}
@@ -355,6 +361,7 @@ func (oc *DefaultNetworkController) ensureNodeLogicalNetwork(node *kapi.Node, ho
 	switchName := node.Name
 	for _, hostSubnet := range hostSubnets {
 		mgmtIfAddr := util.GetNodeManagementIfAddr(hostSubnet)
+		klog.Info("SD DEBUG 66()): %+v", mgmtIfAddr)
 		hostNetworkPolicyIPs = append(hostNetworkPolicyIPs, mgmtIfAddr.IP)
 	}
 

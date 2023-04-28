@@ -48,6 +48,7 @@ func (oc *DefaultNetworkController) syncPods(pods []interface{}) error {
 		switchName := pod.Spec.NodeName
 		for _, subnet := range oc.lsManager.GetSwitchSubnets(switchName) {
 			hybridOverlayIFAddr := util.GetNodeHybridOverlayIfAddr(subnet).IP
+			klog.Info("SD DEBUG 69()): %+v", hybridOverlayIFAddr)
 			for _, route := range annotations.Routes {
 				if !route.NextHop.Equal(hybridOverlayIFAddr) {
 					newRoutes = append(newRoutes, route)

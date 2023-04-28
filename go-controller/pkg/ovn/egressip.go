@@ -2017,6 +2017,7 @@ func (oc *DefaultNetworkController) initEgressIPAllocator(node *kapi.Node) (err 
 			}
 		} else {
 			parsedEgressIPConfig, err = util.ParseNodePrimaryIfAddr(node)
+			klog.Info("SD DEBUG 54(): %+v", parsedEgressIPConfig)
 			if err != nil {
 				return fmt.Errorf("unable to use node for egress assignment, err: %v", err)
 			}
@@ -2028,6 +2029,7 @@ func (oc *DefaultNetworkController) initEgressIPAllocator(node *kapi.Node) (err 
 		mgmtIPs := make([]net.IP, len(nodeSubnets))
 		for i, subnet := range nodeSubnets {
 			mgmtIPs[i] = util.GetNodeManagementIfAddr(subnet).IP
+			klog.Info("SD DEBUG 55(): %+v", mgmtIPs[i])
 		}
 		oc.eIPC.allocator.cache[node.Name] = &egressNode{
 			name:           node.Name,
